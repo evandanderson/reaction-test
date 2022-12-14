@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Test</title>
+    <style>
+        #main {
+            position: absolute;
+            left: 25%;
+            top: 40%;
+            height: 20%;
+            width: 50%;
+            text-align: center;
+        }
+
+        #text {
+            display: block;
+        }
+
+        .stat {
+            display: inline-block;
+            width: 40%;
+        }
+    </style>
+    <script>
+        let ready = false;
+        let active = false;
+        let time = null;
+        let timeout = null;
+        let times = []
+
+        document.addEventListener("keydown", handleKeyDown)
+
+        function start() {
+            ready = true;
+            document.getElementById("text").innerHTML = "Ready..."
+            document.body.style.backgroundColor = "red"
+            timeout = setTimeout(() => {
+                active = true
+                document.getElementById("text").innerHTML = "Go!"
+                document.body.style.backgroundColor = "lime"
+                time = Date.now()
+            }, Math.random() * 2000 + 1000)
+        }
+
+        function handleKeyDown() {
+            if (ready && active) {
+                times.push(Date.now() - time)
+                document.getElementById("recent").innerHTML = Date.now() - time + " ms"
+                document.getElementById("average").innerHTML = Math.round(times.reduce((x, y) => (x + y)) / times.length) + " ms"
+                reset()
+            }
+            else if (ready) {
+                reset()
+            }
+            else {
+                start()
+            }
+        }
+
+        function reset() {
+            active = false
+            ready = false
+            clearTimeout(timeout)
+            document.body.style.backgroundColor = "white"
+            document.getElementById("text").innerHTML = "Press any key to begin"
+        }
+    </script>
+</head>
+
+<body>
+    <div id="main">
+        <span id="text">Press any key to begin</span>
+        <div class="stat">
+            <h2 id="average">0</h2>
+            <p>Average</p>
+        </div>
+        <div class="stat">
+            <h2 id="recent">0</h2>
+            <p>Recent</p>
+        </div>
+    </div>
+</body>
+
+</html>
